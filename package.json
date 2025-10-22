@@ -1,3 +1,4 @@
+
 {
   "name": "origintrail-dkg-testbed",
   "private": true,
@@ -10,7 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@origintrail/dkg.js": "^2.1.1",
+    "dkg.js": "^2.1.1",
     "ethers": "^5.7.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

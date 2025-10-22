@@ -1,4 +1,5 @@
-import type DkgClient from '@origintrail/dkg.js';
+
+import type DkgClient from 'dkg.js';
 
 // Use the actual type from the library for strong type safety.
 export type DKG = DkgClient;

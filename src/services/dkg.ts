@@ -1,4 +1,5 @@
-import DkgClient from '@origintrail/dkg.js';
+
+import DkgClient from 'dkg.js';
 import type { DkgCreateOptions, DkgResult, KnowledgeAsset, DKG } from '../types';
 
 // NeuroWeb Testnet Configuration
