@@ -1,34 +1,43 @@
-
-import React, { useState, useCallback } from 'react';
-import type { DkgResult, DKG } from './types';
+import React, { useState, useEffect } from 'react';
+import type { DKG } from './types';
 import { initializeDkg } from './services/dkg';
 import { CreateAssetCard } from './components/CreateAssetCard';
 import { GetAssetCard } from './components/GetAssetCard';
-import { KeyIcon, AlertTriangleIcon } from './components/Icons';
+import { KeyIcon, AlertTriangleIcon, CheckCircleIcon } from './components/Icons';
 
 export default function App(): React.ReactElement {
-  const [privateKey, setPrivateKey] = useState<string>('');
   const [dkg, setDkg] = useState<DKG | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [createdUal, setCreatedUal] = useState<string | null>(null);
+  const [isInitialized, setIsInitialized] = useState<boolean>(false);
 
-  const handlePrivateKeyChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const pk = e.target.value;
-    setPrivateKey(pk);
-    setError(null);
-    setCreatedUal(null);
-    if (pk.trim().length === 64 || pk.trim().startsWith('0x') && pk.trim().length === 66) {
+  useEffect(() => {
+    // Vercel exposes environment variables via process.env
+    // Ensure you set PRIVATE_KEY in your Vercel project settings
+    const privateKey = process.env.PRIVATE_KEY;
+
+    if (privateKey && privateKey.trim()) {
       try {
-        const dkgInstance = initializeDkg(pk.trim());
-        setDkg(dkgInstance);
+        const pkTrimmed = privateKey.trim();
+        // Basic validation for the private key format
+        if (pkTrimmed.length === 64 || (pkTrimmed.startsWith('0x') && pkTrimmed.length === 66)) {
+          const dkgInstance = initializeDkg(pkTrimmed);
+          setDkg(dkgInstance);
+          setError(null);
+        } else {
+          setError("The PRIVATE_KEY environment variable has an invalid format. It should be 64 hex characters, optionally prefixed with '0x'.");
+          setDkg(null);
+        }
       } catch (err: any) {
-        setError(`Failed to initialize DKG: ${err.message}`);
+        setError(`Failed to initialize DKG from private key: ${err.message}`);
         setDkg(null);
       }
     } else {
+      setError("The PRIVATE_KEY environment variable is not set. Please configure it in your Vercel project settings.");
       setDkg(null);
     }
+    setIsInitialized(true);
   }, []);
 
   return (
@@ -47,36 +56,33 @@ export default function App(): React.ReactElement {
         </header>
 
         <main>
-          {/* Private Key Input */}
+          {/* Wallet Configuration Status */}
           <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 mb-8 border border-gray-700 shadow-lg">
             <h2 className="text-xl font-semibold mb-3 flex items-center gap-2">
               <KeyIcon className="w-6 h-6 text-purple-400" />
-              1. Configure Your Wallet
+              1. Wallet Configuration
             </h2>
-            <div className="relative">
-              <input
-                type="password"
-                placeholder="Enter your EVM private key (0x...)"
-                value={privateKey}
-                onChange={handlePrivateKeyChange}
-                className="w-full bg-gray-900 border border-gray-600 rounded-md px-4 py-3 text-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
-              />
-            </div>
-            {!dkg && privateKey.length > 0 && (
-                <p className="text-yellow-400 text-sm mt-2">Invalid private key format. It should be 64 hex characters, optionally prefixed with '0x'.</p>
+             {isInitialized && dkg && (
+              <div className="flex items-center gap-2 text-green-400">
+                <CheckCircleIcon className="w-5 h-5"/>
+                <p>DKG successfully initialized from environment variable.</p>
+              </div>
+            )}
+            {!dkg && !isInitialized && (
+                <p className="text-gray-400">Attempting to initialize DKG from environment variable...</p>
             )}
              <div className="mt-4 p-3 bg-yellow-900/50 border border-yellow-700 rounded-lg flex items-start gap-3 text-yellow-300 text-sm">
                 <AlertTriangleIcon className="w-5 h-5 mt-0.5 flex-shrink-0" />
                 <div>
-                    <span className="font-bold">Security Warning:</span> This is a test tool. Never use a private key from a wallet with real funds. It is recommended to create a new, temporary wallet for testing. Get test tokens from the{' '}
+                    <span className="font-bold">Security Note:</span> The private key is sourced from an environment variable. Ensure your Vercel project is private and you only use a temporary testnet wallet. Get test tokens from the{' '}
                     <a href="https://faucet.neuroweb.ai/" target="_blank" rel="noopener noreferrer" className="underline hover:text-yellow-100">NeuroWeb Faucet</a>.
                 </div>
             </div>
           </div>
           
-          {error && (
+          {isInitialized && error && (
             <div className="bg-red-900/50 border border-red-700 text-red-300 p-4 rounded-lg mb-8">
-              <p><span className="font-bold">Error:</span> {error}</p>
+              <p><span className="font-bold">Configuration Error:</span> {error}</p>
             </div>
           )}
           
@@ -105,9 +111,9 @@ export default function App(): React.ReactElement {
             />
           </div>
 
-          {!dkg && (
+          {isInitialized && !dkg && (
             <div className="text-center text-gray-500 mt-8">
-              Please enter a valid private key to enable DKG operations.
+              Could not initialize DKG. Please check the error message above and ensure your PRIVATE_KEY is correctly set in Vercel.
             </div>
           )}
 
