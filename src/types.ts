@@ -1,8 +1,13 @@
-import type DkgClient from 'dkg.js';
+// Add DkgClient to the global window interface
+declare global {
+  interface Window {
+    DkgClient: any;
+  }
+}
 
-// The DKG type is now the actual DkgClient type imported from the library.
-// This provides much better type safety and autocompletion.
-export type DKG = DkgClient;
+// A placeholder for the DKG class from dkg.js
+// This allows us to type the dkg instance without needing full type definitions from the library.
+export type DKG = any;
 
 // The structure of a knowledge asset. Can be any JSON-LD object.
 export interface KnowledgeAsset {
