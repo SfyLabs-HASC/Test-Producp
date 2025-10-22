@@ -1,3 +1,9 @@
+// Add DKG to the global window interface
+declare global {
+  interface Window {
+    DKG: any;
+  }
+}
 
 // A placeholder for the DKG class from dkg.js
 // This allows us to type the dkg instance without needing full type definitions from the library.

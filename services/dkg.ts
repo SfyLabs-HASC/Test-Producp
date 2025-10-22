@@ -1,6 +1,4 @@
-
-import DKG from 'https://esm.sh/dkg.js';
-import type { DkgCreateOptions, DkgResult, KnowledgeAsset } from '../types';
+import type { DkgCreateOptions, DkgResult, KnowledgeAsset, DKG } from '../types';
 
 // NeuroWeb Testnet Configuration
 const NEUROWEB_TESTNET_CONFIG = {
@@ -30,8 +28,9 @@ export function initializeDkg(privateKey: string): DKG {
       privateKey,
     },
   };
-  // @ts-ignore dkg.js type definitions might not be perfect
-  return new DKG(config);
+  // Use the DKG from the global window object, loaded via script tag
+  // @ts-ignore dkg.js is loaded from a script tag and may not have perfect types
+  return new window.DKG(config);
 }
 
 /**
