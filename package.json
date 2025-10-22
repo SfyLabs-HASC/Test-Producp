@@ -11,7 +11,7 @@
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "dkg.js": "^2.0.1",
+    "dkg.js": "^2.1.0",
     "ethers": "^5.7.2"
   },
   "devDependencies": {
