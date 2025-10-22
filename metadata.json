@@ -1,0 +1,5 @@
+{
+  "name": "OriginTrail DKG Testbed",
+  "description": "A web application to interact with the OriginTrail Decentralized Knowledge Graph (DKG) on the NeuroWeb testnet. Allows creating and retrieving knowledge assets for testing purposes.",
+  "requestFramePermissions": []
+}
