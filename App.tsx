@@ -15,13 +15,13 @@ function App() {
 
   // Poll to check if the DKG library script has loaded
   useEffect(() => {
-    if (window.DKG) {
+    if (window.DkgClient) {
       setIsDkgLibLoaded(true);
       return;
     }
 
     const intervalId = setInterval(() => {
-      if (window.DKG) {
+      if (window.DkgClient) {
         setIsDkgLibLoaded(true);
         clearInterval(intervalId);
       }

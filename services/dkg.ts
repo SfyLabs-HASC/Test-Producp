@@ -28,13 +28,17 @@ export function initializeDkg(privateKey: string): DKG {
       privateKey,
     },
   };
+  
+  if (!window.DkgClient) {
+    throw new Error('DKG library not loaded. `window.DkgClient` is not available.');
+  }
 
   // The DKG library might expose its constructor directly or under a .default property.
   // This handles both cases to prevent "is not a constructor" errors.
-  const DkgConstructor = window.DKG.default || window.DKG;
+  const DkgConstructor = window.DkgClient.default || window.DkgClient;
 
   if (typeof DkgConstructor !== 'function') {
-    throw new Error('DKG library failed to load or `window.DKG` is not a constructor.');
+    throw new Error('DKG library failed to load or `window.DkgClient` is not a constructor.');
   }
   
   // @ts-ignore

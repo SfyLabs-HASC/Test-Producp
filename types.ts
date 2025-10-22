@@ -1,7 +1,7 @@
-// Add DKG to the global window interface
+// Add DkgClient to the global window interface
 declare global {
   interface Window {
-    DKG: any;
+    DkgClient: any;
   }
 }
 
