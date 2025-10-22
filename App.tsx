@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState } from 'react';
 import { initializeDkg } from './services/dkg';
 import { CreateAssetCard } from './components/CreateAssetCard';
 import { GetAssetCard } from './components/GetAssetCard';
@@ -6,40 +7,11 @@ import { KeyIcon, AlertTriangleIcon, CheckCircleIcon } from './components/Icons'
 import type { DKG } from './types';
 
 function App() {
-  const [isDkgLibLoaded, setIsDkgLibLoaded] = useState<boolean>(false);
   const [privateKey, setPrivateKey] = useState<string>('');
   const [dkg, setDkg] = useState<DKG | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [createdUal, setCreatedUal] = useState<string | null>(null);
-
-  // Dynamically load the DKG library script
-  useEffect(() => {
-    // If library is already loaded (e.g., via HMR), don't re-load.
-    if (window.DkgClient) {
-      setIsDkgLibLoaded(true);
-      return;
-    }
-
-    const script = document.createElement('script');
-    script.src = 'https://unpkg.com/dkg.js@latest/bundle.js';
-    script.async = true;
-
-    const handleLoad = () => setIsDkgLibLoaded(true);
-    const handleError = () => setError('Failed to load the DKG.js library script. Please check your network connection and refresh the page.');
-
-    script.addEventListener('load', handleLoad);
-    script.addEventListener('error', handleError);
-
-    document.body.appendChild(script);
-
-    // Cleanup function to remove the script and event listeners
-    return () => {
-      script.removeEventListener('load', handleLoad);
-      script.removeEventListener('error', handleError);
-      document.body.removeChild(script);
-    };
-  }, []);
 
   const handleInitializeDkg = () => {
     if (!privateKey.trim()) {
@@ -55,17 +27,6 @@ function App() {
       setDkg(null);
     }
   };
-
-  if (!isDkgLibLoaded) {
-    return (
-      <div className="bg-gray-900 text-white min-h-screen flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-            <div className="w-8 h-8 border-4 border-purple-400 border-t-transparent rounded-full animate-spin"></div>
-            <p className="text-lg text-gray-400">Loading DKG library...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="bg-gray-900 text-white min-h-screen font-sans">
