@@ -1,13 +1,7 @@
-// Add DkgClient to the global window interface
-declare global {
-  interface Window {
-    DkgClient: any;
-  }
-}
+import type DkgClient from '@origintrail/dkg.js';
 
-// A placeholder for the DKG class from dkg.js
-// This allows us to type the dkg instance without needing full type definitions from the library.
-export type DKG = any;
+// Use the actual type from the library for strong type safety.
+export type DKG = DkgClient;
 
 // The structure of a knowledge asset. Can be any JSON-LD object.
 export interface KnowledgeAsset {

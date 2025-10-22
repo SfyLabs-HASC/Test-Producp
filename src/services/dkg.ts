@@ -1,3 +1,4 @@
+import DkgClient from '@origintrail/dkg.js';
 import type { DkgCreateOptions, DkgResult, KnowledgeAsset, DKG } from '../types';
 
 // NeuroWeb Testnet Configuration
@@ -28,21 +29,9 @@ export function initializeDkg(privateKey: string): DKG {
       privateKey,
     },
   };
-  
-  if (!window.DkgClient) {
-    throw new Error('DKG library not loaded. `window.DkgClient` is not available.');
-  }
 
-  // The DKG library might expose its constructor directly or under a .default property.
-  // This handles both cases to prevent "is not a constructor" errors.
-  const DkgConstructor = window.DkgClient.default || window.DkgClient;
-
-  if (typeof DkgConstructor !== 'function') {
-    throw new Error('DKG library failed to load or `window.DkgClient` is not a constructor.');
-  }
-  
   // @ts-ignore
-  return new DkgConstructor(config);
+  return new DkgClient(config);
 }
 
 /**
@@ -60,7 +49,6 @@ export async function createAsset(dkg: DKG, content: KnowledgeAsset): Promise<Dk
     epochs: 5,
     frequency: 1, // How often to check for rewards in epochs.
     tokenAmount: 1, // Amount of TRAC to stake.
-    // Add other options as needed
   };
   
   // @ts-ignore dkg.js type definitions might not be perfect
