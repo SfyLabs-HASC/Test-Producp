@@ -1,8 +1,7 @@
-
-import type DkgClient from 'dkg.js';
+import type DKG from '@origintrail/dkg-js-v6';
 
 // Use the actual type from the library for strong type safety.
-export type DKG = DkgClient;
+export type { DKG };
 
 // The structure of a knowledge asset. Can be any JSON-LD object.
 export interface KnowledgeAsset {

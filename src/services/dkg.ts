@@ -1,12 +1,9 @@
+import DKG from '@origintrail/dkg-js-v6';
+import type { DkgCreateOptions, DkgResult, KnowledgeAsset } from '../types';
 
-import DkgClient from 'dkg.js';
-import type { DkgCreateOptions, DkgResult, KnowledgeAsset, DKG } from '../types';
-
-// NeuroWeb Testnet Configuration
+// NeuroWeb Testnet Configuration for DKG v6
 const NEUROWEB_TESTNET_CONFIG = {
-  endpoint: 'dkg-testnet.origin-trail.network',
-  port: 443,
-  useSSL: true,
+  endpoint: 'dkg-testnet.origintrail.network',
   blockchain: {
     name: 'otp:20430',
     rpc: 'https://neuroweb-testnet.origin-trail.network',
@@ -31,8 +28,8 @@ export function initializeDkg(privateKey: string): DKG {
     },
   };
 
-  // @ts-ignore
-  return new DkgClient(config);
+  // @ts-ignore - The constructor might not be perfectly typed in all environments
+  return new DKG(config);
 }
 
 /**
@@ -48,11 +45,10 @@ export async function createAsset(dkg: DKG, content: KnowledgeAsset): Promise<Dk
 
   const options: DkgCreateOptions = {
     epochs: 5,
-    frequency: 1, // How often to check for rewards in epochs.
-    tokenAmount: 1, // Amount of TRAC to stake.
+    frequency: 1,
+    tokenAmount: 1,
   };
   
-  // @ts-ignore dkg.js type definitions might not be perfect
   const result: DkgResult = await dkg.asset.create(content, options);
   return result;
 }
@@ -72,7 +68,7 @@ export async function getAsset(dkg: DKG, ual: string): Promise<DkgResult> {
     state: 'LATEST_FINALIZED',
     validate: true
   };
-  // @ts-ignore dkg.js type definitions might not be perfect
+  
   const result: DkgResult = await dkg.asset.get(ual, options);
   return result;
 }
