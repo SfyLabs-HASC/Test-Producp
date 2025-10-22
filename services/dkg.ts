@@ -28,9 +28,17 @@ export function initializeDkg(privateKey: string): DKG {
       privateKey,
     },
   };
-  // Use the DKG from the global window object, loaded via script tag
-  // @ts-ignore dkg.js is loaded from a script tag and may not have perfect types
-  return new window.DKG(config);
+
+  // The DKG library might expose its constructor directly or under a .default property.
+  // This handles both cases to prevent "is not a constructor" errors.
+  const DkgConstructor = window.DKG.default || window.DKG;
+
+  if (typeof DkgConstructor !== 'function') {
+    throw new Error('DKG library failed to load or `window.DKG` is not a constructor.');
+  }
+  
+  // @ts-ignore
+  return new DkgConstructor(config);
 }
 
 /**
