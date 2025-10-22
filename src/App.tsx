@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { initializeDkg } from './services/dkg';
 import { CreateAssetCard } from './components/CreateAssetCard';
 import { GetAssetCard } from './components/GetAssetCard';
@@ -6,40 +6,11 @@ import { KeyIcon, AlertTriangleIcon, CheckCircleIcon } from './components/Icons'
 import type { DKG } from './types';
 
 function App() {
-  const [isDkgLibLoaded, setIsDkgLibLoaded] = useState<boolean>(false);
   const [privateKey, setPrivateKey] = useState<string>('');
   const [dkg, setDkg] = useState<DKG | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [createdUal, setCreatedUal] = useState<string | null>(null);
-
-  // Dynamically load the DKG library script
-  useEffect(() => {
-    // If library is already loaded (e.g., via HMR), don't re-load.
-    if (window.DkgClient) {
-      setIsDkgLibLoaded(true);
-      return;
-    }
-
-    const script = document.createElement('script');
-    script.src = 'https://unpkg.com/dkg.js@latest/bundle.js';
-    script.async = true;
-
-    const handleLoad = () => setIsDkgLibLoaded(true);
-    const handleError = () => setError('Failed to load the DKG.js library script. Please check your network connection and refresh the page.');
-
-    script.addEventListener('load', handleLoad);
-    script.addEventListener('error', handleError);
-
-    document.body.appendChild(script);
-
-    // Cleanup function to remove the script and event listeners
-    return () => {
-      script.removeEventListener('load', handleLoad);
-      script.removeEventListener('error', handleError);
-      document.body.removeChild(script);
-    };
-  }, []);
 
   const handleInitializeDkg = () => {
     if (!privateKey.trim()) {
@@ -56,17 +27,6 @@ function App() {
     }
   };
 
-  if (!isDkgLibLoaded) {
-    return (
-      <div className="bg-gray-900 text-white min-h-screen flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-            <div className="w-8 h-8 border-4 border-purple-400 border-t-transparent rounded-full animate-spin"></div>
-            <p className="text-lg text-gray-400">Loading DKG library...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="bg-gray-900 text-white min-h-screen font-sans">
       <main className="container mx-auto px-4 py-8">
@@ -77,7 +37,6 @@ function App() {
           </p>
         </header>
 
-        {/* Status Messages */}
         {error && (
           <div className="mb-6 bg-red-900/50 border border-red-700 text-red-300 px-4 py-3 rounded-lg flex items-center gap-3">
             <AlertTriangleIcon className="w-6 h-6" />
@@ -94,9 +53,7 @@ function App() {
         )}
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-          {/* Left side: Setup and Create */}
           <div className="flex flex-col gap-8">
-            {/* Step 1: Initialize DKG */}
             <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 border border-gray-700 shadow-lg">
               <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
                 <KeyIcon className="w-6 h-6 text-purple-400" />
@@ -126,7 +83,6 @@ function App() {
               )}
             </div>
 
-            {/* Step 2: Create Asset */}
             <CreateAssetCard 
               dkg={dkg}
               setIsLoading={setIsLoading}
@@ -136,7 +92,6 @@ function App() {
             />
           </div>
 
-          {/* Right side: Get Asset */}
           <GetAssetCard
             dkg={dkg}
             setIsLoading={setIsLoading}
